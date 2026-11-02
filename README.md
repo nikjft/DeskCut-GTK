@@ -50,6 +50,18 @@ Pass a `.desktop` file to open it straight away:
 
 ## Install
 
+Each [release](https://github.com/nikjft/DeskCut-GTK/releases) includes a `.deb` (Debian, Ubuntu, Pop!_OS) and an `.rpm` (Fedora and other RPM distros):
+
+```bash
+sudo apt install ./deskcut-gtk_VERSION_all.deb
+```
+
+```bash
+sudo dnf install ./deskcut-gtk-VERSION-1.noarch.rpm
+```
+
+Or install from the source tree:
+
 ```bash
 make install            # to ~/.local
 sudo make install PREFIX=/usr/local

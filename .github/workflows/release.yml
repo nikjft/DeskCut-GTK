@@ -13,7 +13,7 @@ jobs:
     container: fedora:latest
     steps:
       - name: Install build tools
-        run: dnf install -y rpm-build make desktop-file-utils git tar gzip gh
+        run: dnf install -y rpm-build make desktop-file-utils git tar gzip
 
       - uses: actions/checkout@v4
 
@@ -28,11 +28,38 @@ jobs:
           mkdir -p dist
           cp ~/rpmbuild/RPMS/noarch/*.rpm ~/rpmbuild/SRPMS/*.rpm dist/
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: dist/*.rpm
+
+  deb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build deb
+        run: packaging/build-deb.sh "${GITHUB_REF_NAME#v}" dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: dist/*.deb
+
+  release:
+    needs: [rpm, deb]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
       - name: Publish release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/*.rpm \
+          gh release create "$GITHUB_REF_NAME" dist/* \
             --repo "$GITHUB_REPOSITORY" \
             --title "DeskCut-GTK ${GITHUB_REF_NAME#v}" \
             --generate-notes
