@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=DeskCut-GTK
+Comment=Create and edit desktop shortcuts
+Exec=deskcut-gtk %f
+Icon=io.github.nikjft.DeskCutGTK
+Terminal=false
+Categories=GTK;Utility;
+Keywords=desktop;shortcut;launcher;menu;
+StartupWMClass=io.github.nikjft.DeskCutGTK
+MimeType=application/x-desktop;
