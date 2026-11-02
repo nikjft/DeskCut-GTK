@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  rpm:
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    steps:
+      - name: Install build tools
+        run: dnf install -y rpm-build make desktop-file-utils git tar gzip gh
+
+      - uses: actions/checkout@v4
+
+      - name: Build RPM
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p ~/rpmbuild/SOURCES
+          git archive --prefix="deskcut-gtk-${VERSION}/" -o ~/rpmbuild/SOURCES/"deskcut-gtk-${VERSION}.tar.gz" HEAD
+          sed -i "s/^Version:.*/Version:        ${VERSION}/" packaging/deskcut-gtk.spec
+          rpmbuild -ba packaging/deskcut-gtk.spec
+          mkdir -p dist
+          cp ~/rpmbuild/RPMS/noarch/*.rpm ~/rpmbuild/SRPMS/*.rpm dist/
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.rpm \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "DeskCut-GTK ${GITHUB_REF_NAME#v}" \
+            --generate-notes
