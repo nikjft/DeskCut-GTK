@@ -63,6 +63,10 @@ sudo make install PREFIX=/usr/local
 make test
 ```
 
+## Disclaimer
+
+This project was vibe coded with an AI assistant. It is provided as is, with no warranty of any kind. It writes files to `~/.local/share/applications` and `~/.local/share/icons`, so review what it does before relying on it.
+
 ## Credits and license
 
 Based on [DeskCut](https://github.com/NayamAmarshe/DeskCut) by Nayam Amarshe. Licensed under the GPLv2, see [LICENSE](LICENSE).

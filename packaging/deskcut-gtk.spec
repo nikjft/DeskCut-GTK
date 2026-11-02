@@ -1,5 +1,5 @@
 Name:           deskcut-gtk
-Version:        2.0.0
+Version:        2.0.1
 Release:        1%{?dist}
 Summary:        Create and edit desktop shortcuts
 License:        GPL-2.0-only
@@ -41,5 +41,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/io.github.nikjft.Desk
 %{_datadir}/icons/hicolor/*/apps/io.github.nikjft.DeskCutGTK.png
 
 %changelog
+* Sun Nov 01 2026 nikjft <nik@inik.net> - 2.0.1-1
+- Show icons for Icon= paths that omit the file extension
 * Sun Nov 01 2026 nikjft <nik@inik.net> - 2.0.0-1
 - Rewrite as a native GTK4/libadwaita application

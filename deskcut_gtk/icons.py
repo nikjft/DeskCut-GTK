@@ -26,17 +26,40 @@ def has_theme_icon(name: str) -> bool:
     return bool(name) and not os.path.isabs(name) and _theme().has_icon(name)
 
 
+IMAGE_EXTENSIONS = (".png", ".svg", ".svgz", ".xpm", ".webp", ".jpg", ".jpeg")
+
+
+def resolve_image_path(value: str) -> str | None:
+    """The image file an absolute Icon= value points at, if any.
+
+    Some files give a path without the extension (Icon=/path/to/icon), so
+    the common image extensions are tried too.
+    """
+    if not value or not os.path.isabs(value):
+        return None
+    if os.path.isfile(value):
+        return value
+    for ext in IMAGE_EXTENSIONS:
+        if os.path.isfile(value + ext):
+            return value + ext
+    return None
+
+
 def image_path(value: str) -> bool:
-    return bool(value) and os.path.isabs(value) and os.path.isfile(value)
+    return resolve_image_path(value) is not None
 
 
 def paintable_for(value: str, size: int = 96, scale: int = 1) -> Gdk.Paintable | None:
     """What to draw for an Icon= value: a theme icon or an image file."""
-    if image_path(value):
+    path = resolve_image_path(value)
+    if path:
         try:
-            return Gdk.Texture.new_from_filename(value)
+            return Gdk.Texture.new_from_filename(path)
         except GLib.Error:
             return None
+    if os.path.isabs(value):
+        # A path that doesn't exist: try its file name as a theme icon.
+        value = os.path.basename(value)
     if has_theme_icon(value):
         return _theme().lookup_icon(
             value, None, size, scale, Gtk.TextDirection.NONE, Gtk.IconLookupFlags(0)

@@ -108,5 +108,17 @@ class CategoriesTest(unittest.TestCase):
         self.assertFalse(c.has_main(["GTK"]))
 
 
+class IconPathTest(unittest.TestCase):
+    def test_absolute_path_without_extension_finds_the_image(self):
+        from deskcut_gtk import icons
+
+        with tempfile.TemporaryDirectory() as tmp:
+            open(os.path.join(tmp, "app.png"), "wb").close()
+            self.assertEqual(icons.resolve_image_path(os.path.join(tmp, "app")), os.path.join(tmp, "app.png"))
+            self.assertEqual(icons.resolve_image_path(os.path.join(tmp, "app.png")), os.path.join(tmp, "app.png"))
+            self.assertIsNone(icons.resolve_image_path(os.path.join(tmp, "missing")))
+            self.assertIsNone(icons.resolve_image_path("theme-icon-name"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -393,9 +393,10 @@ class DeskCutWindow(Adw.ApplicationWindow):
     def adjust_crop(self) -> None:
         if self.icon_source is not None:
             return self.open_crop(self.icon_source)
-        if icons.image_path(self.icon_value):
+        path = icons.resolve_image_path(self.icon_value)
+        if path:
             try:
-                self.open_crop(icons.texture_from_file(self.icon_value))
+                self.open_crop(icons.texture_from_file(path))
             except GLib.Error as e:
                 self.toast(e.message)
 
